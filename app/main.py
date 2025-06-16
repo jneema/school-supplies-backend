@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, UploadFile, File
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect
+from typing import Optional, List
 from app.schemas.users_schema import UserCreate, UserResponse
 from app.schemas.categories_schema import CategoryCreate, CategoryResponse, ProductCreate, ProductResponse, ProductUpdate
 from app.schemas.image_schema import ImageResponse
 from app.users import create_user
 from app.categories import create_category, create_product, update_product
-from app.image import create_image
+from app.image import create_images
 from app.database import engine, SessionLocal, Base
 
 load_dotenv()
@@ -60,7 +61,12 @@ def update_product_endpoint(
 ):
     return update_product(db=db, product_id=id, product=product)
 
-# Updated upload-image endpoint
-@app.post("/upload-image/", response_model=ImageResponse)
-async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    return await create_image(db=db, file=file)
+@app.post("/upload-image/", response_model=List[ImageResponse])
+async def upload_image(
+    files: List[UploadFile] = File(...),
+    user_id: Optional[int] = None,
+    product_id: Optional[int] = None,
+    category_id: Optional[int] = None,
+    db: Session = Depends(get_db)
+):
+    return await create_images(db=db, files=files, user_id=user_id, product_id=product_id, category_id=category_id)

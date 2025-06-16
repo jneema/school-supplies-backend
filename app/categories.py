@@ -9,18 +9,20 @@ def create_category(db: Session, category: CategoryCreate):
     db_category = Category(
         category_name=category.category_name,
         created_at=category.created_at or datetime.utcnow(),
+        image_link=category.image_link,
     )
     db.add(db_category)
     db.commit()
     db.refresh(db_category)
     return db_category
 
-def get_or_create_category(db: Session, category_name: str) -> int:
+def get_or_create_category(db: Session, category_name: str, image_link: str = None) -> int:
     stmt = select(Category).where(Category.category_name == category_name)
     db_category = db.execute(stmt).scalar_one_or_none()
     if not db_category:
         db_category = Category(
             category_name=category_name,
+            image_link=image_link,
             created_at=datetime.utcnow(),
         )
         db.add(db_category)
@@ -42,6 +44,7 @@ def create_product(db: Session, product: ProductCreate):
         rating=product.rating,
         review_count=product.review_count,
         description=product.description,
+        image_link=product.image_link,
         features=product.features,
         specifications=[spec.dict() for spec in product.specifications] if product.specifications else None,
         tags=product.tags,

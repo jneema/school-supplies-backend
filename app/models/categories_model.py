@@ -9,6 +9,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     category_name = Column(String, nullable=False, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    image_link = Column(String, nullable=True)
     products = relationship("Product", back_populates="category")
 
 class Product(Base):
@@ -28,5 +29,6 @@ class Product(Base):
     specifications = Column(JSON, nullable=True)
     tags = Column(String, nullable=True)
     in_stock = Column(Boolean, default=True)
+    image_link = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     category = relationship("Category", back_populates="products")

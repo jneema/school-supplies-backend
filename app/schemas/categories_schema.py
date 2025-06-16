@@ -8,11 +8,13 @@ class Specification(BaseModel):
 
 class CategoryCreate(BaseModel):
     category_name: str
+    image_link: Optional[str] = None
     created_at: Optional[datetime] = None
 
 class CategoryResponse(BaseModel):
     id: int
     category_name: str
+    image_link: Optional[str] = None
     created_at: datetime
     class Config:
         orm_mode = True
@@ -28,6 +30,7 @@ class ProductCreate(BaseModel):
     rating: Optional[float] = None
     review_count: Optional[int] = None
     description: Optional[str] = None
+    image_link: Optional[str] = None
     features: Optional[List[str]] = None
     specifications: Optional[List[Specification]] = None
     tags: Optional[str] = None
@@ -45,6 +48,7 @@ class ProductUpdate(BaseModel):
     rating: Optional[float] = None
     review_count: Optional[int] = None
     description: Optional[str] = None
+    image_link: Optional[str] = None
     features: Optional[List[str]] = None
     specifications: Optional[List[Specification]] = None
     tags: Optional[str] = None
@@ -60,6 +64,7 @@ class ProductResponse(BaseModel):
     colors: Optional[List[str]] = None
     rating: Optional[float] = None
     review_count: Optional[int] = None
+    image_link: Optional[str] = None
     description: Optional[str] = None
     features: Optional[List[str]] = None
     specifications: Optional[List[Dict]] = None
