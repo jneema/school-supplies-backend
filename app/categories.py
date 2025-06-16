@@ -4,6 +4,7 @@ from app.models.categories_model import Category, Product
 from app.schemas.categories_schema import CategoryCreate, ProductCreate, ProductUpdate
 from fastapi import HTTPException
 from datetime import datetime
+from typing import List
 
 def create_category(db: Session, category: CategoryCreate):
     db_category = Category(
@@ -15,6 +16,25 @@ def create_category(db: Session, category: CategoryCreate):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+def get_all_categories(db: Session, skip: int = 0, limit: int = 100) -> List[Category]:
+    try:
+        stmt = select(Category).offset(skip).limit(limit)
+        categories = db.execute(stmt).scalars().all()
+        return categories
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to retrieve categories")
+
+def get_category(db: Session, category_id: int) -> Category:
+    try:
+        category = db.get(Category, category_id)
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        return category
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to retrieve category")
 
 def get_or_create_category(db: Session, category_name: str, image_link: str = None) -> int:
     stmt = select(Category).where(Category.category_name == category_name)
@@ -55,6 +75,25 @@ def create_product(db: Session, product: ProductCreate):
     db.commit()
     db.refresh(db_product)
     return db_product
+
+def get_all_products(db: Session, skip: int = 0, limit: int = 100) -> List[Product]:
+    try:
+        stmt = select(Product).offset(skip).limit(limit)
+        products = db.execute(stmt).scalars().all()
+        return products
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to retrieve products")
+
+def get_product(db: Session, product_id: int) -> Product:
+    try:
+        product = db.get(Product, product_id)
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        return product
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to retrieve product")
 
 def update_product(db: Session, product_id: int, product: ProductUpdate):
     db_product = db.get(Product, product_id)

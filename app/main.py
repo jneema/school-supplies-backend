@@ -9,7 +9,7 @@ from app.schemas.users_schema import UserCreate, UserResponse
 from app.schemas.categories_schema import CategoryCreate, CategoryResponse, ProductCreate, ProductResponse, ProductUpdate
 from app.schemas.image_schema import ImageResponse
 from app.users import create_user
-from app.categories import create_category, create_product, update_product
+from app.categories import create_category, get_all_categories, get_category, create_product, update_product, get_product, get_all_products
 from app.image import create_single_image, create_multiple_images
 from app.database import engine, SessionLocal, Base
 
@@ -49,9 +49,40 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 def add_category(category: CategoryCreate, db: Session = Depends(get_db)):
     return create_category(db=db, category=category)
 
+@app.get("/categories/", response_model=List[CategoryResponse])
+def get_all_categories_endpoint(
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    return get_all_categories(db=db, skip=skip, limit=limit)
+
+@app.get("/categories/{id}", response_model=CategoryResponse)
+def get_category_endpoint(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    return get_category(db=db, category_id=id)
+
 @app.post("/products/", response_model=ProductResponse)
 def add_product(product: ProductCreate, db: Session = Depends(get_db)):
     return create_product(db=db, product=product)
+
+@app.get("/products/", response_model=List[ProductResponse])
+def get_all_products_endpoint(
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    return get_all_products(db=db, skip=skip, limit=limit)
+
+
+@app.get("/products/{id}", response_model=ProductResponse)
+def get_product_endpoint(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    return get_product(db=db, product_id=id)
 
 @app.put("/products/{id}", response_model=ProductResponse)
 def update_product_endpoint(
