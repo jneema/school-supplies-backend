@@ -10,7 +10,7 @@ from app.schemas.categories_schema import CategoryCreate, CategoryResponse, Prod
 from app.schemas.image_schema import ImageResponse
 from app.users import create_user
 from app.categories import create_category, create_product, update_product
-from app.image import create_images
+from app.image import create_single_image, create_multiple_images
 from app.database import engine, SessionLocal, Base
 
 load_dotenv()
@@ -61,12 +61,28 @@ def update_product_endpoint(
 ):
     return update_product(db=db, product_id=id, product=product)
 
-@app.post("/upload-image/", response_model=List[ImageResponse])
-async def upload_image(
-    files: List[UploadFile] = File(...),
+@app.post("/upload-image/single/", response_model=ImageResponse)
+async def upload_single_image(
+    file: UploadFile = File(...),
     user_id: Optional[int] = None,
-    product_id: Optional[int] = None,
     category_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
-    return await create_images(db=db, files=files, user_id=user_id, product_id=product_id, category_id=category_id)
+    return await create_single_image(
+    db=db,
+    file=file,
+    user_id=user_id,
+    category_id=category_id,
+)
+
+@app.post("/upload-image/multiple/", response_model=List[ImageResponse])
+async def upload_multiple_images(
+    files: List[UploadFile] = File(...),
+    product_id: int = None,
+    db: Session = Depends(get_db)
+):
+    return await create_multiple_images(
+        db=db,
+        files=files,
+        product_id=product_id
+    )
