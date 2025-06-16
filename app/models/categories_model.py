@@ -5,6 +5,7 @@ from ..database import Base
 
 class Category(Base):
     __tablename__ = "categories"
+    
     id = Column(Integer, primary_key=True, index=True)
     category_name = Column(String, nullable=False, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -12,6 +13,7 @@ class Category(Base):
 
 class Product(Base):
     __tablename__ = "products"
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     price = Column(Float)
